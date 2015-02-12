@@ -1,16 +1,28 @@
+John Delshadi 75192867
+Ronnie Nguyen 22768608
+Jeffrey Fellows 34201703
+
 How many people are targeted in the data set?
 150 
 
 How many files are we dealing with?
 520,926
 
-How many messages were sent by these people in total?
+How many messages were sent by these people in total? 
 126072
-Sent was interpreted by if a directory had the word sent somewhere in the filename
+We defined a message as being sent if it was found within a folder
+with the word 'sent' in it. We assumed that the mail client or the user
+properly divided messages that were sent and the folders of this assignment
+were created based on this mail client/user structure.
 
 How many messages were sitting in these people's inboxes in total?
 41639
-an inbox is interpreted as a directory called inbox, and ignoring notes_inbox and old_inbox
+We defined a message as being in the person's inbox if it was found within 
+their inbox folder. We assumed that the mail client properly divided messages 
+that were received and the folders of this assignment were created based on 
+this mail client structure. We also ignored folders titled notes_inbox and 
+old_inbox based on the assumption that users created these extra groups/folders 
+to organize their mail and that these were technically not apart of the person's inbox.
 
 The ten people with the most files are
 dasovich-j:144204504
