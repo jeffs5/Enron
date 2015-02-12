@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -22,7 +23,6 @@ public class Sandbox {
 		try {
 			s = new Scanner(new File("StopWords.txt"));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		while(s.hasNext())
@@ -49,7 +49,7 @@ public class Sandbox {
 		while(!fileList.isEmpty() && filesToVisit != 0)
 		{
 			File file = fileList.remove(0);
-
+			
 			if(shouldVisit(file))
 				visit(file);
 			//			System.out.println(filesToVisit);
@@ -66,8 +66,39 @@ public class Sandbox {
 	private static void sortIndex()
 	{
 		//TODO replase al with array of keys
-		//		String[] toSort = Arrays.copyOf(al.toArray(), al.size(), String[].class);
-		//		Arrays.sort(toSort);
+		ArrayList<String> al = new ArrayList<String>();
+		for(String key: index.keySet())
+			al.add(key);
+
+		String[] toSort = Arrays.copyOf(al.toArray(), al.size(), String[].class);
+		Arrays.sort(toSort);
+
+		try {
+			PrintWriter pw = new PrintWriter("index_plain.txt");
+			for(String key: toSort)
+			{
+
+				ArrayList<String> identifierArray = new ArrayList<String>();
+				for(Identifier i: index.get(key))
+					identifierArray.add(i.getDocument());
+
+				String[] toSortIdentifier = Arrays.copyOf(identifierArray.toArray(), identifierArray.size(), String[].class);
+				Arrays.sort(toSortIdentifier);
+
+				pw.write(key + " ");
+				for(String i: toSortIdentifier)
+				{
+					for(Identifier ident: index.get(key))
+						if(ident.getDocument().equals(i))
+							pw.write(ident.toString());
+				}
+				pw.write("\n");
+			}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		System.out.println("Index Sorted");
 	}
@@ -80,12 +111,8 @@ public class Sandbox {
 
 	private static void visit(File file)
 	{
-		System.out.println(file);
-		for(String z: index.keySet())
-		{
-			System.out.println(z + " " + index.get(z).toString());
-		}
-		
+//		System.out.println(file);
+
 		if (file.isDirectory())
 		{
 			for(File f: file.listFiles())
@@ -144,18 +171,18 @@ public class Sandbox {
 					}
 				}
 				s.close();
-				
+
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			System.out.println(tokens.toString());
+//			System.out.println(tokens.toString());
 			//			System.out.println("File");
 		}
 	}
 
-	
+
 	private static String getShortFilePath(String file)
 	{
 		return file.substring(51, file.length());
