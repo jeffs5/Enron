@@ -42,13 +42,36 @@ public class Utilities {
 		}
 
 		ArrayList<String> returner = new ArrayList<String>();
-
+		boolean forwarded = false;
+		int position = 0;
+		
+		
 		while(s.hasNext())
 		{
 			//String temp = s.next();
-			for(String each: s.next().replaceAll("[^a-zA-Z0-9']", " ").split(" "))
+			for(String each: s.next().replaceAll("[^a-zA-Z0-9'@\\-\\:]", " ").split(" "))
+			{
 				if(!each.isEmpty())
-					returner.add(each.toLowerCase());
+				{
+					//does not add stop words
+					if(!Sandbox.stopWords.containsKey(each))
+					{
+						//does not add header
+						if(!each.endsWith(":"))
+						{	
+							if(each.equals("----------------------"))
+								forwarded = true;
+							if(!forwarded)
+								returner.add(each.toLowerCase());
+							if(each.equals("---------------------------"))
+								forwarded = false;
+							
+						}
+					}
+				}
+				position+= each.length();
+				position++;
+			}
 		}
 
 		s.close();

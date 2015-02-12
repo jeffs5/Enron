@@ -1,7 +1,9 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 
 
 public class Sandbox {
@@ -10,6 +12,7 @@ public class Sandbox {
 	private static int totalDataFiles;
 	private static HashMap<String, Integer> sentMessages;
 	private static ArrayList<Frequency> filesPerPerson;
+	public static HashMap<String, Boolean> stopWords;
 
 	private static void initalize()
 	{
@@ -17,6 +20,21 @@ public class Sandbox {
 		totalDataFiles = 0;
 		sentMessages = new HashMap<String, Integer>();
 		filesPerPerson = new ArrayList<Frequency>();
+		
+		stopWords = new HashMap<String, Boolean>();
+		
+		Scanner s = null;
+		try {
+			s = new Scanner(new File("StopWords.txt"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while(s.hasNext())
+		{
+			stopWords.put(s.nextLine(), false);
+		}
+		s.close();
 	}
 
 	public static void main(String[] args) {
@@ -69,27 +87,16 @@ public class Sandbox {
 
 		if (file.isDirectory())
 		{
-			int totalIndividualFiles = 0;
 			for(File f: file.listFiles())
 			{
-//				System.out.println(f.getName());
-				if(f.isDirectory())
-				{
-					for(File f2: f.listFiles())
-					{
-						totalIndividualFiles += f2.length();
-					}
-				}
-				else if(f.isFile())
-					totalIndividualFiles += 1;
-
+				fileList.add(f);
 			}
-			filesPerPerson.add(new Frequency(file.getName(), totalIndividualFiles));
 			//			System.out.println("Directory");
 		}
 
-		else if(file.isFile())
+		else if(file.isFile() && !file.getName().contains(".DS_Store"))
 		{
+//			System.out.println(Utilities.tokenizeFile(file));
 			//			System.out.println("File");
 		}
 	}
