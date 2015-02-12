@@ -1,28 +1,23 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.PriorityQueue;
 import java.util.Scanner;
 
 
 public class Sandbox {
 
 	private static ArrayList<File> fileList;
-	private static int totalDataFiles;
-	private static HashMap<String, Integer> sentMessages;
-	private static ArrayList<Frequency> filesPerPerson;
 	public static HashMap<String, Boolean> stopWords;
+	private static HashMap<String, ArrayList<Identifier>> index;
 
 	private static void initalize()
 	{
 		fileList = new ArrayList<File>();
-		totalDataFiles = 0;
-		sentMessages = new HashMap<String, Integer>();
-		filesPerPerson = new ArrayList<Frequency>();
-		
 		stopWords = new HashMap<String, Boolean>();
-		
+		index = new HashMap<String, ArrayList<Identifier>>();
+
 		Scanner s = null;
 		try {
 			s = new Scanner(new File("StopWords.txt"));
@@ -60,20 +55,22 @@ public class Sandbox {
 			//			System.out.println(filesToVisit);
 			filesToVisit--;
 		}
+		System.out.println("Done tokenizing");
 
-		System.out.println(filesPerPerson.toString());
-		PriorityQueue<Frequency> topTen = new PriorityQueue<Frequency>(200, WordFrequencyCounter.freqComparator);
-		for(Frequency f: filesPerPerson)
-		{
-			topTen.add(f);
-		}
-		for(int i = 0; i< 10; i++)
-			System.out.println(topTen.poll());
-		System.out.println("The total number of data files is " + totalDataFiles);
+		sortIndex();
 
+		//		PrintWriter writer = new PrintWriter(new File("index_plain.txt"));
+		//		writer.write(sortedIndex.toString());
 	}
 
+	private static void sortIndex()
+	{
+		//TODO replase al with array of keys
+		//		String[] toSort = Arrays.copyOf(al.toArray(), al.size(), String[].class);
+		//		Arrays.sort(toSort);
 
+		System.out.println("Index Sorted");
+	}
 
 	private static boolean shouldVisit(File file)
 	{
@@ -83,8 +80,12 @@ public class Sandbox {
 
 	private static void visit(File file)
 	{
-		//		System.out.println(file);
-
+		System.out.println(file);
+		for(String z: index.keySet())
+		{
+			System.out.println(z + " " + index.get(z).toString());
+		}
+		
 		if (file.isDirectory())
 		{
 			for(File f: file.listFiles())
@@ -96,9 +97,67 @@ public class Sandbox {
 
 		else if(file.isFile() && !file.getName().contains(".DS_Store"))
 		{
-//			System.out.println(Utilities.tokenizeFile(file));
+			PrintWriter pw = null;
+			try {
+				pw = new PrintWriter("toStem.txt");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			HashMap<String, ArrayList<Integer>> tokens = Utilities.tokenizeFile(file);
+			for(String key: tokens.keySet())
+				pw.write(key + "\n");
+			pw.close();
+			String[] forStemmer = {"toStem.txt"};
+			Stemmer.main(forStemmer);
+			try {
+				Scanner s = new Scanner(new File("stemmedWords.txt"));
+				for(String key: tokens.keySet())
+				{
+					String token = s.next();
+					if(index.containsKey(token))
+					{
+						boolean inList = false;
+						ArrayList<Identifier> identifierList = index.get(token);
+
+						for(Identifier i: identifierList)
+							if(i.getDocument().equals(getShortFilePath(file.getPath())))
+							{
+								inList = true;
+								for(int position: tokens.get(key))
+									i.addPosition(position);
+							}
+						if(!inList)
+						{
+							ArrayList<Integer> positions = tokens.get(key);
+							Identifier i = new Identifier(getShortFilePath(file.getPath()), positions);
+							identifierList.add(i);
+						}
+					}
+					else
+					{
+						ArrayList<Identifier> identifierList = new ArrayList<Identifier>();
+						ArrayList<Integer> positions = tokens.get(key);
+						Identifier i = new Identifier(getShortFilePath(file.getPath()), positions);
+						identifierList.add(i);
+						index.put(token, identifierList);
+					}
+				}
+				s.close();
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			System.out.println(tokens.toString());
 			//			System.out.println("File");
 		}
 	}
 
+	
+	private static String getShortFilePath(String file)
+	{
+		return file.substring(51, file.length());
+	}
 }

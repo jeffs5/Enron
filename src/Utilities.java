@@ -3,8 +3,8 @@
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,7 +32,7 @@ public class Utilities {
 	 * @param input The file to read in and tokenize.
 	 * @return The list of tokens (words) from the input file, ordered by occurrence.
 	 */
-	public static ArrayList<String> tokenizeFile(File input) {
+	public static HashMap<String, ArrayList<Integer>> tokenizeFile(File input) {
 
 		Scanner s = null;
 		try {
@@ -44,38 +44,51 @@ public class Utilities {
 		ArrayList<String> returner = new ArrayList<String>();
 		boolean forwarded = false;
 		int position = 0;
-		
-		
+		HashMap<String, ArrayList<Integer>> tokenList = new HashMap<String, ArrayList<Integer>>();
+
 		while(s.hasNext())
 		{
 			//String temp = s.next();
 			for(String each: s.next().replaceAll("[^a-zA-Z0-9'@\\-\\:]", " ").split(" "))
 			{
-				if(!each.isEmpty())
+				each = each.toLowerCase();
+				if(each.equals("----------------------"))
+					forwarded = true;
+				if(!each.isEmpty() && !forwarded)
 				{
-					//does not add stop words
-					if(!Sandbox.stopWords.containsKey(each))
+
+					if(!each.endsWith(":"))
 					{
-						//does not add header
-						if(!each.endsWith(":"))
-						{	
-							if(each.equals("----------------------"))
-								forwarded = true;
-							if(!forwarded)
-								returner.add(each.toLowerCase());
-							if(each.equals("---------------------------"))
-								forwarded = false;
-							
+						//does not add stop words
+						if(!Sandbox.stopWords.containsKey(each))
+						{
+							//does not add header
+
+							if(tokenList.containsKey(each))
+								tokenList.get(each).add(position);
+							else	
+							{
+								ArrayList<Integer> al = new ArrayList<Integer>();
+								al.add(position);
+								tokenList.put(each, al);
+							}
+							//returner.add(each.toLowerCase());
+
 						}
+						position += each.length();
 					}
+					
 				}
-				position+= each.length();
+
 				position++;
+				if(each.equals("---------------------------"))
+					forwarded = false;
+
 			}
 		}
 
 		s.close();
-		return returner;
+		return tokenList;
 	}
 
 

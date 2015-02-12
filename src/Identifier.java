@@ -7,12 +7,10 @@ public class Identifier {
 	private String document;
 	ArrayList<Integer> positions;
 	
-	public Identifier(String doc, int position){
-		document = doc;
-		positions = new ArrayList<Integer>();
-		
-		addPosition(position);
-		
+	public Identifier(String doc, ArrayList<Integer> positions){
+		this.document = doc;
+		this.positions = positions;
+		this.frequency = positions.size();
 	}
 	
 	public void addPosition(int position){
@@ -39,13 +37,13 @@ public class Identifier {
 	//returns string in format request in assignment
 	//[\t<doc>:<frequency>:<position>[,<position>]*]+
 	public String toString(){
-		String output ="	" + document + ":" + frequency + ":";
+		String output ="\t" + document + ":" + frequency + ":";
 		for(int i = 0; i < positions.size(); i++){
-			output = output + positions.get(i); 
-			if(i != positions.size()-1){
-				output = output + ",";
-			}
+			
+			output += ",";
+			output += positions.get(i); 
+
 		}
-		return output;
+		return output.replaceFirst(",", "");
 	}
 }
