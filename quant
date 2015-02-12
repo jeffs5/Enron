@@ -3,3 +3,23 @@ How many people are targeted in the data set?
 
 How many files are we dealing with?
 520,926
+
+How many messages were sent by these people in total?
+126072
+Sent was interpreted by if a directory had the word sent somewhere in the filename
+
+How many messages were sitting in these people's inboxes in total?
+41639
+an inbox is interpreted as a directory called inbox, and ignoring notes_inbox and old_inbox
+
+The ten people with the most files are
+dasovich-j:144204504
+kean-s:69941761
+kaminski-v:61990853
+mann-k:44315156
+jones-t:42175211
+shackleton-s:41184698
+taylor-m:31403280
+beck-s:27458446
+scott-s:24182190
+farmer-d:23502542
