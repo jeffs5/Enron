@@ -38,10 +38,10 @@ public class Sandbox {
 
 		//set to restrict how many files to go through
 		//set to -1 for infinite
-		int filesToVisit = -1;
+		int filesToVisit = 20000;
 
 		//populate list with starting seeds
-		for(File f : new File("/Users/jeffs5s/Desktop/enron_mail_20110402/maildir/").listFiles())
+		for(File f : new File("/Users/ronnie/Downloads/enron_mail_20110402/maildir/").listFiles())
 			fileList.add(f);
 
 
@@ -50,6 +50,10 @@ public class Sandbox {
 		{
 			File file = fileList.remove(0);
 			
+			if(filesToVisit%5000 == 0){
+				System.out.println(filesToVisit);
+			}
+			
 			if(shouldVisit(file))
 				visit(file);
 			//			System.out.println(filesToVisit);
@@ -57,7 +61,7 @@ public class Sandbox {
 		}
 		System.out.println("Done tokenizing");
 
-		sortIndex();
+		System.out.println(index.size());
 
 		//		PrintWriter writer = new PrintWriter(new File("index_plain.txt"));
 		//		writer.write(sortedIndex.toString());
@@ -112,7 +116,6 @@ public class Sandbox {
 	private static void visit(File file)
 	{
 //		System.out.println(file);
-
 		if (file.isDirectory())
 		{
 			for(File f: file.listFiles())
@@ -185,6 +188,6 @@ public class Sandbox {
 
 	private static String getShortFilePath(String file)
 	{
-		return file.substring(51, file.length());
+		return file.substring(52, file.length());
 	}
 }
