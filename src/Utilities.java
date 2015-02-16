@@ -56,14 +56,12 @@ public class Utilities {
 					forwarded = true;
 				if(!each.isEmpty() && !forwarded)
 				{
-
+					//does not add header
 					if(!each.endsWith(":"))
 					{
 						//does not add stop words
 						if(!Sandbox.stopWords.containsKey(each))
 						{
-							//does not add header
-
 							if(tokenList.containsKey(each))
 								tokenList.get(each).add(position);
 							else	
