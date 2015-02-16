@@ -1,3 +1,7 @@
+//John Delshadi 75192867
+//Ronnie Nguyen 22768608
+//Jeffrey Fellows 34201703
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
